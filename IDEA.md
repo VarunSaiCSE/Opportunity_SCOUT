@@ -17,7 +17,7 @@ By 6am I want one Telegram message with the good stuff. Not a link dump — I wa
 - **The Telegram message must arrive at 06:00, no exceptions.**
 - I want a local web UI I can open in a browser to read the archive, tune what it looks for, and see what happened during the run.
 
-## Hard requirements — please design around these
+## Hard requirements — please design around these!
 
 These matter more to me than any feature:
 
