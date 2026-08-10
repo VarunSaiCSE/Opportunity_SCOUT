@@ -89,10 +89,10 @@
             </div>
             
             <div class="flex gap-2 relative z-30">
-                <button onclick="vote('{{ opp.id }}', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('{{ opp.id }}', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('{{ opp.id }}', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
                     <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
                 </button>
-                <button onclick="vote('{{ opp.id }}', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('{{ opp.id }}', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('{{ opp.id }}', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
                     <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
                 </button>
             </div>
