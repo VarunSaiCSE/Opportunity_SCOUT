@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Magic Universe Portal Animation */
+    @keyframes warp-portal {
+        0% {
+            transform: scale(1) translate(0, 0);
+            filter: brightness(1) contrast(1);
+            border-color: #808080;
+        }
+        20% {
+            transform: scale(0.95) translate(2px, -2px);
+            filter: brightness(0.5) contrast(2) invert(1);
+            border-color: #fff;
+            box-shadow: 0 0 50px rgba(255,255,255,0.5);
+        }
+        40% {
+            transform: scale(0.9) translate(-2px, 2px) skewX(2deg);
+            filter: brightness(2) contrast(3) hue-rotate(90deg);
+            background-color: #fff;
+            color: #000;
+        }
+        100% {
+            transform: scale(20) rotate(5deg);
+            filter: blur(10px) brightness(5);
+            opacity: 0;
+        }
+    }
+
+    .warp-active {
+        animation: warp-portal 1.2s cubic-bezier(0.5, 0, 0.2, 1) forwards !important;
+        pointer-events: none;
+        z-index: 9999;
+        position: relative;
+    }
+    
+    .clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+    }
+</style>
+
+<!-- Header Section -->
+<div class="mb-8 strict-border p-6 flex flex-col md:flex-row md:items-start justify-between">
+    <div>
+        <h1 class="font-mono text-3xl font-bold tracking-widest text-silver mb-2 uppercase">
+            [ Opportunity Matrix ]
+        </h1>
+        <p class="font-mono text-sm text-silver-dark">
+            // AUTONOMOUS_DISCOVERIES | LONG_PRESS_TO_DECRYPT
+        </p>
+    </div>
+    
+    <div class="mt-4 md:mt-0 font-mono text-right">
+        <div class="text-xs text-silver-dark mb-1">PROCESSED_ENTITIES</div>
+        <div class="text-2xl font-bold text-silver">0{{ opportunities|length }}</div>
+    </div>
+</div>
+
+<!-- Grid Layout: 3 Columns -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for opp in opportunities %}
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-{{ opp.id }}"
+         onmousedown="startPress('{{ opp.url }}', 'desc-{{ opp.id }}', 'card-{{ opp.id }}')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('{{ opp.url }}', 'desc-{{ opp.id }}', 'card-{{ opp.id }}')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:{{ opp.severity }}</span>
+                    {% if opp.sent_at %}
+                    <span class="text-black bg-silver-dark px-1">PUSHED</span>
+                    {% endif %}
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    {% if opp.source_type == 'hn' %}
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    {% elif opp.source_type == 'reddit' %}
+                        <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                    {% else %}
+                        <i data-lucide="rss" class="w-3.5 h-3.5"></i>
+                    {% endif %}
+                    <span>[{{ opp.source_name }}]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                {{ opp.score }}
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            {{ opp.title }}
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            {{ opp.problem_description }}
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: {{ opp.target_audience }}
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-{{ opp.id }}" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            {{ opp.problem_description }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    let pressTimer;
+    let isLongPress = false;
+    let targetUrl = '';
+    let currentCardId = '';
+    
+    function startPress(url, descId, cardId) {
+        isLongPress = false;
+        targetUrl = url;
+        currentCardId = cardId;
+        pressTimer = window.setTimeout(function() {
+            isLongPress = true;
+            document.getElementById(descId).classList.toggle('open');
+            // Hide the clamp-3 preview when full description is open
+            const preview = document.getElementById(cardId).querySelector('.clamp-3');
+            if (preview) {
+                preview.style.display = document.getElementById(descId).classList.contains('open') ? 'none' : '-webkit-box';
+            }
+        }, 500); 
+    }
+    
+    function endPress() {
+        clearTimeout(pressTimer);
+        if (!isLongPress && targetUrl && currentCardId) {
+            // Trigger Magic Portal Animation
+            const card = document.getElementById(currentCardId);
+            card.classList.add('warp-active');
+            
+            // Wait for 1 second animation to finish before redirecting
+            setTimeout(() => {
+                window.open(targetUrl, '_blank');
+                // Optional: remove class after opening so it resets if they come back
+                setTimeout(() => card.classList.remove('warp-active'), 500);
+            }, 1000);
+        }
+        targetUrl = '';
+        currentCardId = '';
+    }
+    
+    function cancelPress() {
+        clearTimeout(pressTimer);
+        targetUrl = '';
+        currentCardId = '';
+    }
+</script>
+{% endblock %}

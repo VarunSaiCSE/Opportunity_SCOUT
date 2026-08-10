@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOUT Intelligence - Terminal</title>
+    
+    <!-- Google Fonts: Space Mono and Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    colors: {
+                        background: '#000000',
+                        silver: {
+                            DEFAULT: '#C0C0C0',
+                            dark: '#808080',
+                            light: '#E0E0E0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            background-color: #000000;
+            color: #C0C0C0;
+            /* Old school grid background */
+            background-image: 
+                linear-gradient(rgba(192, 192, 192, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(192, 192, 192, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow-x: hidden;
+            border: 4px solid #C0C0C0;
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        /* Strict grid components */
+        .strict-border {
+            border: 1px solid #C0C0C0;
+            background-color: #000000;
+        }
+
+        .strict-border-b { border-bottom: 1px solid #C0C0C0; }
+        .strict-border-r { border-right: 1px solid #C0C0C0; }
+        .strict-border-t { border-top: 1px solid #C0C0C0; }
+
+        /* Japanese grid style card */
+        .grid-card {
+            border: 1px solid #808080;
+            background-color: #000;
+            transition: background-color 0s, color 0s;
+            cursor: pointer;
+        }
+
+        .grid-card:hover {
+            background-color: #C0C0C0;
+            color: #000000;
+        }
+        
+        .grid-card:hover * {
+            color: #000000 !important;
+            border-color: #000000 !important;
+        }
+
+        .description-reveal {
+            display: none;
+            border-top: 1px solid #808080;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .description-reveal.open {
+            display: block;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <!-- Top Bar Grid -->
+    <header class="strict-border-b bg-black sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex items-center h-12">
+            <div class="w-12 h-full flex items-center justify-center strict-border-r">
+                <i data-lucide="radar" class="w-5 h-5 text-silver"></i>
+            </div>
+            <div class="px-4 h-full flex items-center strict-border-r">
+                <span class="font-mono font-bold text-silver tracking-widest uppercase">SCOUT</span>
+            </div>
+            <div class="px-4 h-full flex items-center hidden md:flex text-sm font-mono text-silver-dark">
+                <span>SYSTEM_STATUS: ONLINE</span>
+            </div>
+            <div class="ml-auto px-4 h-full flex items-center text-xs font-mono strict-border-l">
+                ARCHIVE / OPPORTUNITIES
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 relative z-10">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
