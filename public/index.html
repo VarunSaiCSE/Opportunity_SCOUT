@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOUT Intelligence - Terminal</title>
+    
+    <!-- Google Fonts: Space Mono and Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    colors: {
+                        background: '#000000',
+                        silver: {
+                            DEFAULT: '#C0C0C0',
+                            dark: '#808080',
+                            light: '#E0E0E0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            background-color: #000000;
+            color: #C0C0C0;
+            /* Old school grid background */
+            background-image: 
+                linear-gradient(rgba(192, 192, 192, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(192, 192, 192, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow-x: hidden;
+            border: 4px solid #C0C0C0;
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        /* Strict grid components */
+        .strict-border {
+            border: 1px solid #C0C0C0;
+            background-color: #000000;
+        }
+
+        .strict-border-b { border-bottom: 1px solid #C0C0C0; }
+        .strict-border-r { border-right: 1px solid #C0C0C0; }
+        .strict-border-t { border-top: 1px solid #C0C0C0; }
+
+        /* Japanese grid style card */
+        .grid-card {
+            border: 1px solid #808080;
+            background-color: #000;
+            transition: background-color 0s, color 0s;
+            cursor: pointer;
+        }
+
+        .grid-card:hover {
+            background-color: #C0C0C0;
+            color: #000000;
+        }
+        
+        .grid-card:hover * {
+            color: #000000 !important;
+            border-color: #000000 !important;
+        }
+
+        .description-reveal {
+            display: none;
+            border-top: 1px solid #808080;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .description-reveal.open {
+            display: block;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <!-- Top Bar Grid -->
+    <header class="strict-border-b bg-black sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex items-center h-12">
+            <div class="w-12 h-full flex items-center justify-center strict-border-r">
+                <i data-lucide="radar" class="w-5 h-5 text-silver"></i>
+            </div>
+            <div class="px-4 h-full flex items-center strict-border-r">
+                <span class="font-mono font-bold text-silver tracking-widest uppercase">SCOUT</span>
+            </div>
+            <div class="px-4 h-full flex items-center hidden md:flex text-sm font-mono text-silver-dark">
+                <span>SYSTEM_STATUS: ONLINE</span>
+            </div>
+            <div class="ml-auto px-4 h-full flex items-center text-xs font-mono strict-border-l">
+                ARCHIVE / OPPORTUNITIES
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 relative z-10">
+        
+<style>
+    /* Magic Universe Portal Animation */
+    @keyframes warp-portal {
+        0% {
+            transform: scale(1) translate(0, 0);
+            filter: brightness(1) contrast(1);
+            border-color: #808080;
+        }
+        20% {
+            transform: scale(0.95) translate(2px, -2px);
+            filter: brightness(0.5) contrast(2) invert(1);
+            border-color: #fff;
+            box-shadow: 0 0 50px rgba(255,255,255,0.5);
+        }
+        40% {
+            transform: scale(0.9) translate(-2px, 2px) skewX(2deg);
+            filter: brightness(2) contrast(3) hue-rotate(90deg);
+            background-color: #fff;
+            color: #000;
+        }
+        100% {
+            transform: scale(20) rotate(5deg);
+            filter: blur(10px) brightness(5);
+            opacity: 0;
+        }
+    }
+
+    .warp-active {
+        animation: warp-portal 1.2s cubic-bezier(0.5, 0, 0.2, 1) forwards !important;
+        pointer-events: none;
+        z-index: 9999;
+        position: relative;
+    }
+    
+    .clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+    }
+</style>
+
+<!-- Header Section -->
+<div class="mb-8 strict-border p-6 flex flex-col md:flex-row md:items-start justify-between">
+    <div>
+        <h1 class="font-mono text-3xl font-bold tracking-widest text-silver mb-2 uppercase">
+            [ Opportunity Matrix ]
+        </h1>
+        <p class="font-mono text-sm text-silver-dark">
+            // AUTONOMOUS_DISCOVERIES | LONG_PRESS_TO_DECRYPT
+        </p>
+    </div>
+    
+    <div class="mt-4 md:mt-0 font-mono text-right">
+        <div class="text-xs text-silver-dark mb-1">PROCESSED_ENTITIES</div>
+        <div class="text-2xl font-bold text-silver">015</div>
+    </div>
+</div>
+
+<!-- Grid Layout: 3 Columns -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-15"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49230194', 'desc-15', 'card-15')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49230194', 'desc-15', 'card-15')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:8</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                7.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            LLM Work Chaos
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            LLMs marketed as work assistants are failing to handle non-code aspects of work, potentially causing chaos in organizations.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Organizations using or considering LLMs for work assistance
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-15" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            LLMs marketed as work assistants are failing to handle non-code aspects of work, potentially causing chaos in organizations.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-4"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49226913', 'desc-4', 'card-4')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49226913', 'desc-4', 'card-4')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:8</span>
+                    
+                    <span class="text-black bg-silver-dark px-1">PUSHED</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                7.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            AI Fluency Gap
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Professionals using AI report higher proficiency than their actual performance, leading to significant discrepancies within teams despite uniform training.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Professionals using AI in their work, particularly those in product management, engineering, HR, and other roles requiring regular interaction with AI technology.
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-4" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Professionals using AI report higher proficiency than their actual performance, leading to significant discrepancies within teams despite uniform training.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-14"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49230276', 'desc-14', 'card-14')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49230276', 'desc-14', 'card-14')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:8</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            AI Fraud Detector
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Scammers use AI models to commit fraud, making it difficult for users of AI chatbots and victims of online scams to distinguish between human and AI interactions.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Users of AI chatbots and victims of online scams
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-14" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Scammers use AI models to commit fraud, making it difficult for users of AI chatbots and victims of online scams to distinguish between human and AI interactions.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-13"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49231052', 'desc-13', 'card-13')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49231052', 'desc-13', 'card-13')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:8</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            Assisted Driving for Elders
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Elderly parents need an assisted driving vehicle to ensure their safety and prevent fatigue, targeting adult children concerned about elderly drivers.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Adult children with elderly parents who drive
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-13" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Elderly parents need an assisted driving vehicle to ensure their safety and prevent fatigue, targeting adult children concerned about elderly drivers.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-10"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49232797', 'desc-10', 'card-10')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49232797', 'desc-10', 'card-10')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:5</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            CLI AI Query
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Users seeking quick, command-line-based access to AI services lack readily available solutions.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Users who prefer command-line interfaces for quick queries
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-10" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Users seeking quick, command-line-based access to AI services lack readily available solutions.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-9"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49235224', 'desc-9', 'card-9')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49235224', 'desc-9', 'card-9')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:8</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            SecureAIAssistant
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Users of multiple AI coding clients face privacy risks when assistants access each other's directories without permission.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Users of AI coding clients who have installed multiple coding assistants on their machine.
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-9" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Users of multiple AI coding clients face privacy risks when assistants access each other's directories without permission.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-8"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49224798', 'desc-8', 'card-8')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49224798', 'desc-8', 'card-8')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:7</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            Formal Abstraction API
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Current formal module abstraction methods struggle to identify and address duplication in agentic programming, hindering efficiency and effectiveness.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Software developers and researchers working on formal abstractions and agentic programming
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-8" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Current formal module abstraction methods struggle to identify and address duplication in agentic programming, hindering efficiency and effectiveness.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-7"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49226365', 'desc-7', 'card-7')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49226365', 'desc-7', 'card-7')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:7</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            PrivacyGuard
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Individuals are concerned about unwanted BLE trackers being placed in their personal belongings and struggle with detecting and removing them.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Individuals concerned about privacy and security, especially those who have purchased second-hand items or are worried about stalking.
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-7" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Individuals are concerned about unwanted BLE trackers being placed in their personal belongings and struggle with detecting and removing them.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-5"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49226638', 'desc-5', 'card-5')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49226638', 'desc-5', 'card-5')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:7</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            PowerPC Community Hub
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            The Open POWER Foundation website lacks engagement and resources compared to riscv.org, missing out on potential contributors and users in the PowerPC ecosystem.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: People who rely on or are interested in the PowerPC ecosystem
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-5" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            The Open POWER Foundation website lacks engagement and resources compared to riscv.org, missing out on potential contributors and users in the PowerPC ecosystem.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-3"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49227024', 'desc-3', 'card-3')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49227024', 'desc-3', 'card-3')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:6</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            Agent-Driven Testing
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Traditional CI/CD testing is becoming less effective for developers using agent-driven coding, necessitating local agent-driven code testing.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Developers and engineers who use agent-driven coding in their workflow
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-3" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Traditional CI/CD testing is becoming less effective for developers using agent-driven coding, necessitating local agent-driven code testing.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-2"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49227632', 'desc-2', 'card-2')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49227632', 'desc-2', 'card-2')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:8</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            GeoToolRevive
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Users are losing access to familiar, reliable tools like Google Earth Pro as it will no longer be available for download.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Long-term users of Google Earth Pro and other discontinued tools
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-2" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Users are losing access to familiar, reliable tools like Google Earth Pro as it will no longer be available for download.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-1"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49227635', 'desc-1', 'card-1')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49227635', 'desc-1', 'card-1')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:7</span>
+                    
+                    <span class="text-black bg-silver-dark px-1">PUSHED</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                6.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            Disk Scalability for Hetzner
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Developers and system administrators face limitations in disk capacity per volume when migrating infrastructure to Hetzner, hindering database scalability.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Developers and system administrators dealing with large-scale data storage on Hetzner servers.
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-1" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Developers and system administrators face limitations in disk capacity per volume when migrating infrastructure to Hetzner, hindering database scalability.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-11"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49232136', 'desc-11', 'card-11')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49232136', 'desc-11', 'card-11')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:9</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                5.0
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            AI Integrity Monitor
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            The AI industry faces systemic issues such as ideological illusions, unsustainable financial models, environmental degradation, and ethical violations, impacting society at large.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Society at large, including consumers, businesses, policymakers, and technologists.
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-11" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            The AI industry faces systemic issues such as ideological illusions, unsustainable financial models, environmental degradation, and ethical violations, impacting society at large.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-12"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49231405', 'desc-12', 'card-12')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49231405', 'desc-12', 'card-12')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:5</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                4.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            Smart Door Access
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Businesses frequently leave one side of double doors locked, creating inconvenience for customers and employees. This solution aims to streamline access control.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Business owners and managers
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-12" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Businesses frequently leave one side of double doors locked, creating inconvenience for customers and employees. This solution aims to streamline access control.
+        </div>
+    </div>
+    
+    <div class="grid-card p-5 flex flex-col min-h-[280px]"
+         id="card-6"
+         onmousedown="startPress('https://news.ycombinator.com/item?id=49226441', 'desc-6', 'card-6')" 
+         onmouseup="endPress()" 
+         onmouseleave="cancelPress()"
+         ontouchstart="startPress('https://news.ycombinator.com/item?id=49226441', 'desc-6', 'card-6')"
+         ontouchend="endPress()">
+         
+        <!-- Top Row -->
+        <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                    <span>SEV:3</span>
+                    
+                </div>
+                <!-- Source Logo & Name -->
+                <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                    
+                        <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                    
+                    <span>[HN: Ask HN]</span>
+                </div>
+            </div>
+            
+            <div class="font-mono text-3xl font-bold text-silver leading-none">
+                4.5
+            </div>
+        </div>
+        
+        <!-- Title -->
+        <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+            Polyglot Books
+        </h3>
+        
+        <!-- Preview of Description -->
+        <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+            Polyglots lack books written simultaneously in multiple languages, limiting their learning experience.
+        </p>
+        
+        <!-- Bottom Info -->
+        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
+            TARGET: Polyglots
+        </div>
+        
+        <!-- Full Description (Hidden by default, shown on long press) -->
+        <div id="desc-6" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+            <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+            Polyglots lack books written simultaneously in multiple languages, limiting their learning experience.
+        </div>
+    </div>
+    
+</div>
+
+<script>
+    let pressTimer;
+    let isLongPress = false;
+    let targetUrl = '';
+    let currentCardId = '';
+    
+    function startPress(url, descId, cardId) {
+        isLongPress = false;
+        targetUrl = url;
+        currentCardId = cardId;
+        pressTimer = window.setTimeout(function() {
+            isLongPress = true;
+            document.getElementById(descId).classList.toggle('open');
+            // Hide the clamp-3 preview when full description is open
+            const preview = document.getElementById(cardId).querySelector('.clamp-3');
+            if (preview) {
+                preview.style.display = document.getElementById(descId).classList.contains('open') ? 'none' : '-webkit-box';
+            }
+        }, 500); 
+    }
+    
+    function endPress() {
+        clearTimeout(pressTimer);
+        if (!isLongPress && targetUrl && currentCardId) {
+            // Trigger Magic Portal Animation
+            const card = document.getElementById(currentCardId);
+            card.classList.add('warp-active');
+            
+            // Wait for 1 second animation to finish before redirecting
+            setTimeout(() => {
+                window.open(targetUrl, '_blank');
+                // Optional: remove class after opening so it resets if they come back
+                setTimeout(() => card.classList.remove('warp-active'), 500);
+            }, 1000);
+        }
+        targetUrl = '';
+        currentCardId = '';
+    }
+    
+    function cancelPress() {
+        clearTimeout(pressTimer);
+        targetUrl = '';
+        currentCardId = '';
+    }
+</script>
+
+    </main>
+    
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
