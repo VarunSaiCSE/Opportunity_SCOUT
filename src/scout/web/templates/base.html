@@ -96,27 +96,65 @@
     <!-- Top Bar Grid -->
     <header class="strict-border-b bg-black sticky top-0 z-50">
         <div class="max-w-6xl mx-auto flex items-center h-12">
-            <div class="w-12 h-full flex items-center justify-center strict-border-r">
+            <div class="w-12 h-full flex items-center justify-center strict-border-r relative z-20">
                 <i data-lucide="radar" class="w-5 h-5 text-silver"></i>
             </div>
-            <div class="px-4 h-full flex items-center strict-border-r">
+            <div class="px-4 h-full flex items-center strict-border-r relative z-20">
                 <span class="font-mono font-bold text-silver tracking-widest uppercase">SCOUT</span>
             </div>
-            <div class="px-4 h-full flex items-center hidden md:flex text-sm font-mono text-silver-dark">
+            <div class="px-4 h-full flex items-center hidden md:flex text-sm font-mono text-silver-dark relative z-20">
                 <span>SYSTEM_STATUS: ONLINE</span>
             </div>
-            <div class="ml-auto px-4 h-full flex items-center text-xs font-mono strict-border-l">
+            <div class="ml-auto px-4 h-full flex items-center text-xs font-mono strict-border-l relative z-20">
                 ARCHIVE / OPPORTUNITIES
             </div>
         </div>
     </header>
 
+    <div id="grid-blinks" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:1;"></div>
+
     <main class="max-w-6xl mx-auto px-4 py-8 relative z-10">
         {% block content %}{% endblock %}
     </main>
     
+    <style>
+        @keyframes blink-anim {
+            0% { opacity: 0; box-shadow: 0 0 0px #a855f7; }
+            50% { opacity: 0.6; box-shadow: 0 0 10px #a855f7; }
+            100% { opacity: 0; box-shadow: 0 0 0px #a855f7; }
+        }
+    </style>
     <script>
         lucide.createIcons();
+        
+        // Purple Grid Blinking Effect
+        function initGridBlinks() {
+            const container = document.getElementById('grid-blinks');
+            setInterval(() => {
+                const cols = Math.floor(window.innerWidth / 20);
+                const rows = Math.floor(window.innerHeight / 20);
+                
+                const x = Math.floor(Math.random() * cols) * 20;
+                const y = Math.floor(Math.random() * rows) * 20;
+                
+                const blinker = document.createElement('div');
+                blinker.style.position = 'absolute';
+                blinker.style.left = x + 'px';
+                blinker.style.top = y + 'px';
+                blinker.style.width = '20px';
+                blinker.style.height = '20px';
+                blinker.style.backgroundColor = '#a855f7'; // Purple
+                blinker.style.opacity = '0';
+                blinker.style.animation = 'blink-anim 2s ease-in-out forwards';
+                
+                container.appendChild(blinker);
+                
+                // Cleanup
+                setTimeout(() => blinker.remove(), 2000);
+            }, 300); // A new blink every 300ms
+        }
+        
+        initGridBlinks();
     </script>
 </body>
 </html>

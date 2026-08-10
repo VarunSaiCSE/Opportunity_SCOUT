@@ -96,55 +96,52 @@
     <!-- Top Bar Grid -->
     <header class="strict-border-b bg-black sticky top-0 z-50">
         <div class="max-w-6xl mx-auto flex items-center h-12">
-            <div class="w-12 h-full flex items-center justify-center strict-border-r">
+            <div class="w-12 h-full flex items-center justify-center strict-border-r relative z-20">
                 <i data-lucide="radar" class="w-5 h-5 text-silver"></i>
             </div>
-            <div class="px-4 h-full flex items-center strict-border-r">
+            <div class="px-4 h-full flex items-center strict-border-r relative z-20">
                 <span class="font-mono font-bold text-silver tracking-widest uppercase">SCOUT</span>
             </div>
-            <div class="px-4 h-full flex items-center hidden md:flex text-sm font-mono text-silver-dark">
+            <div class="px-4 h-full flex items-center hidden md:flex text-sm font-mono text-silver-dark relative z-20">
                 <span>SYSTEM_STATUS: ONLINE</span>
             </div>
-            <div class="ml-auto px-4 h-full flex items-center text-xs font-mono strict-border-l">
+            <div class="ml-auto px-4 h-full flex items-center text-xs font-mono strict-border-l relative z-20">
                 ARCHIVE / OPPORTUNITIES
             </div>
         </div>
     </header>
 
+    <div id="grid-blinks" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:1;"></div>
+
     <main class="max-w-6xl mx-auto px-4 py-8 relative z-10">
         
 <style>
-    /* Magic Universe Portal Animation */
-    @keyframes warp-portal {
-        0% {
-            transform: scale(1) translate(0, 0);
-            filter: brightness(1) contrast(1);
-            border-color: #808080;
-        }
-        20% {
-            transform: scale(0.95) translate(2px, -2px);
-            filter: brightness(0.5) contrast(2) invert(1);
-            border-color: #fff;
-            box-shadow: 0 0 50px rgba(255,255,255,0.5);
-        }
-        40% {
-            transform: scale(0.9) translate(-2px, 2px) skewX(2deg);
-            filter: brightness(2) contrast(3) hue-rotate(90deg);
-            background-color: #fff;
-            color: #000;
-        }
-        100% {
-            transform: scale(20) rotate(5deg);
-            filter: blur(10px) brightness(5);
-            opacity: 0;
-        }
+    /* Purple and White Pixel Ripple Effect */
+    @keyframes ripple-anim {
+        0% { transform: translate(-50%, -50%) scale(0); opacity: 0.9; }
+        100% { transform: translate(-50%, -50%) scale(15); opacity: 0; }
     }
 
-    .warp-active {
-        animation: warp-portal 1.2s cubic-bezier(0.5, 0, 0.2, 1) forwards !important;
+    .ripple-circle {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: repeating-radial-gradient(
+            circle,
+            #a855f7 0, #a855f7 5px,
+            #ffffff 5px, #ffffff 10px
+        );
+        transform: translate(-50%, -50%) scale(0);
+        animation: ripple-anim 600ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         pointer-events: none;
-        z-index: 9999;
+        z-index: 50;
+    }
+    
+    /* Ensure cards can contain absolute positioned elements */
+    .grid-card {
         position: relative;
+        overflow: hidden;
     }
     
     .clamp-3 {
@@ -177,11 +174,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-15"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49230194', 'desc-15', 'card-15')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49230194', 'desc-15', 'card-15')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49230194', 'desc-15', 'card-15')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49230194', 'desc-15', 'card-15')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -228,11 +225,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-4"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49226913', 'desc-4', 'card-4')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49226913', 'desc-4', 'card-4')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49226913', 'desc-4', 'card-4')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49226913', 'desc-4', 'card-4')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -281,11 +278,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-14"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49230276', 'desc-14', 'card-14')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49230276', 'desc-14', 'card-14')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49230276', 'desc-14', 'card-14')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49230276', 'desc-14', 'card-14')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -332,11 +329,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-13"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49231052', 'desc-13', 'card-13')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49231052', 'desc-13', 'card-13')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49231052', 'desc-13', 'card-13')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49231052', 'desc-13', 'card-13')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -383,11 +380,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-10"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49232797', 'desc-10', 'card-10')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49232797', 'desc-10', 'card-10')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49232797', 'desc-10', 'card-10')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49232797', 'desc-10', 'card-10')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -434,11 +431,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-9"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49235224', 'desc-9', 'card-9')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49235224', 'desc-9', 'card-9')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49235224', 'desc-9', 'card-9')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49235224', 'desc-9', 'card-9')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -485,11 +482,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-8"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49224798', 'desc-8', 'card-8')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49224798', 'desc-8', 'card-8')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49224798', 'desc-8', 'card-8')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49224798', 'desc-8', 'card-8')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -536,11 +533,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-7"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49226365', 'desc-7', 'card-7')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49226365', 'desc-7', 'card-7')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49226365', 'desc-7', 'card-7')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49226365', 'desc-7', 'card-7')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -587,11 +584,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-5"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49226638', 'desc-5', 'card-5')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49226638', 'desc-5', 'card-5')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49226638', 'desc-5', 'card-5')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49226638', 'desc-5', 'card-5')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -638,11 +635,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-3"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49227024', 'desc-3', 'card-3')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49227024', 'desc-3', 'card-3')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49227024', 'desc-3', 'card-3')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49227024', 'desc-3', 'card-3')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -689,11 +686,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-2"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49227632', 'desc-2', 'card-2')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49227632', 'desc-2', 'card-2')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49227632', 'desc-2', 'card-2')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49227632', 'desc-2', 'card-2')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -740,11 +737,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-1"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49227635', 'desc-1', 'card-1')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49227635', 'desc-1', 'card-1')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49227635', 'desc-1', 'card-1')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49227635', 'desc-1', 'card-1')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -793,11 +790,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-11"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49232136', 'desc-11', 'card-11')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49232136', 'desc-11', 'card-11')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49232136', 'desc-11', 'card-11')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49232136', 'desc-11', 'card-11')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -844,11 +841,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-12"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49231405', 'desc-12', 'card-12')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49231405', 'desc-12', 'card-12')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49231405', 'desc-12', 'card-12')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49231405', 'desc-12', 'card-12')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -895,11 +892,11 @@
     
     <div class="grid-card p-5 flex flex-col min-h-[280px]"
          id="card-6"
-         onmousedown="startPress('https://news.ycombinator.com/item?id=49226441', 'desc-6', 'card-6')" 
-         onmouseup="endPress()" 
+         onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49226441', 'desc-6', 'card-6')" 
+         onmouseup="endPress(event)" 
          onmouseleave="cancelPress()"
-         ontouchstart="startPress('https://news.ycombinator.com/item?id=49226441', 'desc-6', 'card-6')"
-         ontouchend="endPress()">
+         ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49226441', 'desc-6', 'card-6')"
+         ontouchend="endPress(event)">
          
         <!-- Top Row -->
         <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
@@ -952,14 +949,18 @@
     let targetUrl = '';
     let currentCardId = '';
     
-    function startPress(url, descId, cardId) {
+    function startPress(event, url, descId, cardId) {
+        // Prevent default to stop text selection on long press
+        if (event.type === 'touchstart') {
+            // Optional: event.preventDefault(); might block scrolling
+        }
+        
         isLongPress = false;
         targetUrl = url;
         currentCardId = cardId;
         pressTimer = window.setTimeout(function() {
             isLongPress = true;
             document.getElementById(descId).classList.toggle('open');
-            // Hide the clamp-3 preview when full description is open
             const preview = document.getElementById(cardId).querySelector('.clamp-3');
             if (preview) {
                 preview.style.display = document.getElementById(descId).classList.contains('open') ? 'none' : '-webkit-box';
@@ -967,19 +968,38 @@
         }, 500); 
     }
     
-    function endPress() {
+    function endPress(event) {
         clearTimeout(pressTimer);
         if (!isLongPress && targetUrl && currentCardId) {
-            // Trigger Magic Portal Animation
             const card = document.getElementById(currentCardId);
-            card.classList.add('warp-active');
             
-            // Wait for 1 second animation to finish before redirecting
+            // Calculate ripple coordinates based on click event relative to the card
+            let rect = card.getBoundingClientRect();
+            let x = event.clientX || (event.changedTouches && event.changedTouches[0].clientX);
+            let y = event.clientY || (event.changedTouches && event.changedTouches[0].clientY);
+            
+            // Fallback to center if no event coords
+            if (!x || !y) {
+                x = rect.left + rect.width / 2;
+                y = rect.top + rect.height / 2;
+            }
+            
+            let relativeX = x - rect.left;
+            let relativeY = y - rect.top;
+            
+            // Create Ripple Element
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple-circle');
+            ripple.style.left = relativeX + 'px';
+            ripple.style.top = relativeY + 'px';
+            card.appendChild(ripple);
+            
+            // Wait 600ms for ripple animation before redirecting
             setTimeout(() => {
                 window.open(targetUrl, '_blank');
-                // Optional: remove class after opening so it resets if they come back
-                setTimeout(() => card.classList.remove('warp-active'), 500);
-            }, 1000);
+                // Cleanup ripple
+                setTimeout(() => ripple.remove(), 100);
+            }, 600);
         }
         targetUrl = '';
         currentCardId = '';
@@ -994,8 +1014,44 @@
 
     </main>
     
+    <style>
+        @keyframes blink-anim {
+            0% { opacity: 0; box-shadow: 0 0 0px #a855f7; }
+            50% { opacity: 0.6; box-shadow: 0 0 10px #a855f7; }
+            100% { opacity: 0; box-shadow: 0 0 0px #a855f7; }
+        }
+    </style>
     <script>
         lucide.createIcons();
+        
+        // Purple Grid Blinking Effect
+        function initGridBlinks() {
+            const container = document.getElementById('grid-blinks');
+            setInterval(() => {
+                const cols = Math.floor(window.innerWidth / 20);
+                const rows = Math.floor(window.innerHeight / 20);
+                
+                const x = Math.floor(Math.random() * cols) * 20;
+                const y = Math.floor(Math.random() * rows) * 20;
+                
+                const blinker = document.createElement('div');
+                blinker.style.position = 'absolute';
+                blinker.style.left = x + 'px';
+                blinker.style.top = y + 'px';
+                blinker.style.width = '20px';
+                blinker.style.height = '20px';
+                blinker.style.backgroundColor = '#a855f7'; // Purple
+                blinker.style.opacity = '0';
+                blinker.style.animation = 'blink-anim 2s ease-in-out forwards';
+                
+                container.appendChild(blinker);
+                
+                // Cleanup
+                setTimeout(() => blinker.remove(), 2000);
+            }, 300); // A new blink every 300ms
+        }
+        
+        initGridBlinks();
     </script>
 </body>
 </html>
