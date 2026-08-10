@@ -2,24 +2,28 @@
 
 {% block content %}
 <style>
-    /* Purple and White Pixel Ripple Effect */
-    @keyframes ripple-anim {
-        0% { transform: translate(-50%, -50%) scale(0); opacity: 0.9; }
-        100% { transform: translate(-50%, -50%) scale(15); opacity: 0; }
+    /* Purple and White Retro Pixel Ripple */
+    @keyframes pixel-ripple-anim {
+        0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+        100% { transform: translate(-50%, -50%) scale(30); opacity: 0; }
     }
 
-    .ripple-circle {
+    .ripple-pixel {
         position: absolute;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: repeating-radial-gradient(
-            circle,
-            #a855f7 0, #a855f7 5px,
-            #ffffff 5px, #ffffff 10px
+        width: 40px;
+        height: 40px;
+        /* Square instead of circle for retro feel */
+        border-radius: 0; 
+        background: repeating-conic-gradient(
+            #a855f7 0% 25%, 
+            #ffffff 25% 50%, 
+            #a855f7 50% 75%, 
+            #ffffff 75% 100%
         );
+        background-size: 20px 20px;
         transform: translate(-50%, -50%) scale(0);
-        animation: ripple-anim 600ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        /* Use steps() for a choppy, 8-bit retro animation frame rate */
+        animation: pixel-ripple-anim 600ms steps(8, end) forwards;
         pointer-events: none;
         z-index: 50;
     }
@@ -163,15 +167,16 @@
             
             // Create Ripple Element
             const ripple = document.createElement('div');
-            ripple.classList.add('ripple-circle');
+            ripple.classList.add('ripple-pixel');
             ripple.style.left = relativeX + 'px';
             ripple.style.top = relativeY + 'px';
             card.appendChild(ripple);
             
             // Wait 600ms for ripple animation before redirecting
             setTimeout(() => {
-                window.open(targetUrl, '_blank');
-                // Cleanup ripple
+                // Use location.href because window.open is blocked by browsers inside async callbacks
+                window.location.href = targetUrl;
+                // Cleanup ripple (in case they use back button)
                 setTimeout(() => ripple.remove(), 100);
             }, 600);
         }
