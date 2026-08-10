@@ -1,15 +1,22 @@
 import os
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from scout.db import get_connection
+from scout.db import get_connection, record_vote
 
 app = FastAPI(title="SCOUT Dashboard")
 
 # Setup templates
 templates_dir = Path(__file__).parent / "templates"
 templates = Jinja2Templates(directory=str(templates_dir))
+
+@app.post("/api/vote/{opportunity_id}")
+async def vote_opportunity(opportunity_id: int, vote: int = Form(...)):
+    """Records an upvote (1) or downvote (-1)."""
+    record_vote(opportunity_id, vote)
+    return JSONResponse(content={"status": "success"})
 
 def get_opportunities():
     """Fetch all scored opportunities from the database."""

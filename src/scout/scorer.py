@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from scout.llm import generate_structured, LLMError
-from scout.db import get_connection
+from scout.db import get_connection, get_user_preferences
 
 class OpportunityScore(BaseModel):
     title: str = Field(description="A catchy, 3-5 word title for the startup idea.")
@@ -46,6 +46,20 @@ def score_all():
     problems = get_unscored_problems()
     print(f"Found {len(problems)} unscored problems.")
     
+    prefs = get_user_preferences()
+    liked_examples = "\n".join([f"- {desc}" for desc in prefs['liked']]) if prefs['liked'] else "None yet."
+    disliked_examples = "\n".join([f"- {desc}" for desc in prefs['disliked']]) if prefs['disliked'] else "None yet."
+    
+    system_prompt = f"""You are a brilliant startup advisor and software engineer.
+    
+Here are examples of problems the user LIKED in the past:
+{liked_examples}
+
+Here are examples of problems the user DISLIKED in the past:
+{disliked_examples}
+
+Use this context to align your scoring with the user's specific preferences. Give higher scores to problems similar to those they liked, and drastically lower scores to problems similar to those they disliked."""
+
     for prob in problems:
         print(f"\nScoring Problem {prob['id']}: {prob['problem_summary']}")
         
@@ -60,7 +74,7 @@ def score_all():
         - The developer is a solo dev with zero marketing budget.
         - The solution must be buildable in a few weeks or months.
         
-        Score it from 1.0 to 10.0 based on these constraints.
+        Score it from 1.0 to 10.0 based on these constraints and the user's preferences.
         """
         
         try:
@@ -68,7 +82,7 @@ def score_all():
                 prompt=prompt,
                 response_model=OpportunityScore,
                 model_name="qwen2.5:14b",
-                system_prompt="You are a brilliant startup advisor and software engineer."
+                system_prompt=system_prompt
             )
             
             print(f"  -> Title: {result.title}")

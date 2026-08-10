@@ -46,10 +46,11 @@ CREATE TABLE IF NOT EXISTS opportunities (
     problem_id INTEGER, -- Can be linked to a specific problem
     title TEXT NOT NULL,
     problem_description TEXT NOT NULL,
-    score REAL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    sent_at DATETIME,
-    FOREIGN KEY(problem_id) REFERENCES problems(id)
+    score INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sent_at TIMESTAMP NULL,
+    user_vote INTEGER DEFAULT 0,
+    FOREIGN KEY (problem_id) REFERENCES problems (id)
 );
 
 -- Tracks system runs (processor, delivery, etc)

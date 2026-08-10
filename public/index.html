@@ -105,9 +105,11 @@
             <div class="px-4 h-full flex items-center hidden md:flex text-sm font-mono text-silver-dark relative z-20">
                 <span>SYSTEM_STATUS: ONLINE</span>
             </div>
-            <div class="ml-auto px-4 h-full flex items-center text-xs font-mono strict-border-l relative z-20">
-                ARCHIVE / OPPORTUNITIES
-            </div>
+            
+            <a href="https://github.com/VarunSaiCSE/Opportunity_SCOUT" target="_blank" class="ml-auto px-4 h-full flex items-center gap-2 hover:bg-silver hover:text-black transition-colors strict-border-l relative z-20 group">
+                <i data-lucide="github" class="w-4 h-4 text-silver group-hover:text-black"></i>
+                <span class="text-xs font-mono font-bold">VarunSaiCSE</span>
+            </a>
         </div>
     </header>
 
@@ -190,9 +192,20 @@
             LLMs marketed as work assistants are failing to handle non-code aspects of work, potentially causing chaos in organizations.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Organizations using or considering LLMs for work assistance
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Organizations using or considering LLMs for work assistance
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('15', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('15', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -243,9 +256,20 @@
             Professionals using AI report higher proficiency than their actual performance, leading to significant discrepancies within teams despite uniform training.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Professionals using AI in their work, particularly those in product management, engineering, HR, and other roles requiring regular interaction with AI technology.
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Professionals using AI in their work, particularly those in product management, engineering, HR, and other roles requiring regular interaction with AI technology.
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('4', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('4', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -294,9 +318,20 @@
             Scammers use AI models to commit fraud, making it difficult for users of AI chatbots and victims of online scams to distinguish between human and AI interactions.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Users of AI chatbots and victims of online scams
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Users of AI chatbots and victims of online scams
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('14', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('14', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -345,9 +380,20 @@
             Elderly parents need an assisted driving vehicle to ensure their safety and prevent fatigue, targeting adult children concerned about elderly drivers.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Adult children with elderly parents who drive
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Adult children with elderly parents who drive
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('13', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('13', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -396,9 +442,20 @@
             Users seeking quick, command-line-based access to AI services lack readily available solutions.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Users who prefer command-line interfaces for quick queries
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Users who prefer command-line interfaces for quick queries
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('10', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('10', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -447,9 +504,20 @@
             Users of multiple AI coding clients face privacy risks when assistants access each other's directories without permission.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Users of AI coding clients who have installed multiple coding assistants on their machine.
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Users of AI coding clients who have installed multiple coding assistants on their machine.
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('9', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('9', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -498,9 +566,20 @@
             Current formal module abstraction methods struggle to identify and address duplication in agentic programming, hindering efficiency and effectiveness.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Software developers and researchers working on formal abstractions and agentic programming
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Software developers and researchers working on formal abstractions and agentic programming
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('8', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('8', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -549,9 +628,20 @@
             Individuals are concerned about unwanted BLE trackers being placed in their personal belongings and struggle with detecting and removing them.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Individuals concerned about privacy and security, especially those who have purchased second-hand items or are worried about stalking.
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Individuals concerned about privacy and security, especially those who have purchased second-hand items or are worried about stalking.
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('7', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('7', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -600,9 +690,20 @@
             The Open POWER Foundation website lacks engagement and resources compared to riscv.org, missing out on potential contributors and users in the PowerPC ecosystem.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: People who rely on or are interested in the PowerPC ecosystem
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: People who rely on or are interested in the PowerPC ecosystem
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('5', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('5', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -651,9 +752,20 @@
             Traditional CI/CD testing is becoming less effective for developers using agent-driven coding, necessitating local agent-driven code testing.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Developers and engineers who use agent-driven coding in their workflow
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Developers and engineers who use agent-driven coding in their workflow
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('3', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('3', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -702,9 +814,20 @@
             Users are losing access to familiar, reliable tools like Google Earth Pro as it will no longer be available for download.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Long-term users of Google Earth Pro and other discontinued tools
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Long-term users of Google Earth Pro and other discontinued tools
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('2', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('2', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -755,9 +878,20 @@
             Developers and system administrators face limitations in disk capacity per volume when migrating infrastructure to Hetzner, hindering database scalability.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Developers and system administrators dealing with large-scale data storage on Hetzner servers.
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Developers and system administrators dealing with large-scale data storage on Hetzner servers.
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('1', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('1', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -806,9 +940,20 @@
             The AI industry faces systemic issues such as ideological illusions, unsustainable financial models, environmental degradation, and ethical violations, impacting society at large.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Society at large, including consumers, businesses, policymakers, and technologists.
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Society at large, including consumers, businesses, policymakers, and technologists.
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('11', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('11', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -857,9 +1002,20 @@
             Businesses frequently leave one side of double doors locked, creating inconvenience for customers and employees. This solution aims to streamline access control.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Business owners and managers
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Business owners and managers
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('12', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('12', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -908,9 +1064,20 @@
             Polyglots lack books written simultaneously in multiple languages, limiting their learning experience.
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: Polyglots
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: Polyglots
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('6', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('6', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -923,6 +1090,34 @@
 </div>
 
 <script>
+    function vote(opportunityId, value, event) {
+        event.stopPropagation(); // Prevent card click logic
+        
+        fetch(`/api/vote/${opportunityId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `vote=${value}`
+        }).then(response => {
+            if(response.ok) {
+                // Visual feedback
+                const btn = event.currentTarget;
+                const originalBg = btn.style.backgroundColor;
+                btn.style.backgroundColor = '#a855f7';
+                btn.style.color = 'black';
+                setTimeout(() => {
+                    btn.style.backgroundColor = originalBg;
+                    btn.style.color = '';
+                }, 500);
+            } else {
+                alert("Cannot vote from static site. Run SCOUT locally!");
+            }
+        }).catch(e => {
+            alert("Cannot vote from static site. Run SCOUT locally!");
+        });
+    }
+
     let pressTimer;
     let isLongPress = false;
     let targetUrl = '';

@@ -82,9 +82,20 @@
             {{ opp.problem_description }}
         </p>
         
-        <!-- Bottom Info -->
-        <div class="mt-auto font-mono text-xs text-silver-dark uppercase pt-4 border-t border-silver-dark/50">
-            TARGET: {{ opp.target_audience }}
+        <!-- Bottom Info & Voting -->
+        <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+            <div class="font-mono text-xs text-silver-dark uppercase">
+                TARGET: {{ opp.target_audience }}
+            </div>
+            
+            <div class="flex gap-2 relative z-30">
+                <button onclick="vote('{{ opp.id }}', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                    <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                </button>
+                <button onclick="vote('{{ opp.id }}', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Full Description (Hidden by default, shown on long press) -->
@@ -97,6 +108,34 @@
 </div>
 
 <script>
+    function vote(opportunityId, value, event) {
+        event.stopPropagation(); // Prevent card click logic
+        
+        fetch(`/api/vote/${opportunityId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `vote=${value}`
+        }).then(response => {
+            if(response.ok) {
+                // Visual feedback
+                const btn = event.currentTarget;
+                const originalBg = btn.style.backgroundColor;
+                btn.style.backgroundColor = '#a855f7';
+                btn.style.color = 'black';
+                setTimeout(() => {
+                    btn.style.backgroundColor = originalBg;
+                    btn.style.color = '';
+                }, 500);
+            } else {
+                alert("Cannot vote from static site. Run SCOUT locally!");
+            }
+        }).catch(e => {
+            alert("Cannot vote from static site. Run SCOUT locally!");
+        });
+    }
+
     let pressTimer;
     let isLongPress = false;
     let targetUrl = '';
