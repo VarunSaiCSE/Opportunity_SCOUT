@@ -167,6 +167,8 @@
                 <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
                     <span>SEV:8</span>
                     
+                    <span class="text-black bg-silver-dark px-1">PUSHED</span>
+                    
                 </div>
                 <!-- Source Logo & Name -->
                 <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
@@ -1099,7 +1101,7 @@
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: `vote=${value}`
-        }).then(response => {
+        }).then(async response => {
             if(response.ok) {
                 // Visual feedback
                 const btn = event.currentTarget;
@@ -1111,10 +1113,11 @@
                     btn.style.color = '';
                 }, 500);
             } else {
-                alert("Cannot vote from static site. Run SCOUT locally!");
+                const text = await response.text();
+                alert(`Error ${response.status}: ${text}`);
             }
         }).catch(e => {
-            alert("Cannot vote from static site. Run SCOUT locally!");
+            alert(`Network Error: ${e.message}`);
         });
     }
 
