@@ -110,6 +110,7 @@
 <script>
     function vote(opportunityId, value, event) {
         event.stopPropagation(); // Prevent card click logic
+        const btn = event.currentTarget;
         
         fetch(`/api/vote/${opportunityId}`, {
             method: 'POST',
@@ -120,7 +121,6 @@
         }).then(async response => {
             if(response.ok) {
                 // Visual feedback
-                const btn = event.currentTarget;
                 const originalBg = btn.style.backgroundColor;
                 btn.style.backgroundColor = '#a855f7';
                 btn.style.color = 'black';
