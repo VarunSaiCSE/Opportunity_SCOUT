@@ -5,6 +5,11 @@ from scout.detector import run_pipeline as run_detection
 from scout.scorer import score_all
 
 def run_processor():
+    import time
+    start_time = time.time()
+    # 2 hours and 55 minutes deadline (5 min buffer before 5:00 AM if started at 2:00 AM)
+    deadline = start_time + (2.9 * 3600)
+    
     print("========================================")
     print("Starting SCOUT Nightly Processor Job...")
     print("========================================\n")
@@ -18,20 +23,28 @@ def run_processor():
         run_id = cursor.lastrowid
         conn.commit()
         
-        # 2. Scrape data (Phase 3)
-        print("--- STAGE 1: INGESTION ---")
+        # 2. Sync Cloudflare Votes
+        print("--- STAGE 0: SYNCING VOTES ---")
+        try:
+            from scout.sync_votes import sync_votes_from_cloud
+            sync_votes_from_cloud()
+        except Exception as e:
+            print(f"Failed to sync votes: {e}")
+            
+        # 3. Scrape data (Phase 3)
+        print("\n--- STAGE 1: INGESTION ---")
         manager = SourceManager()
         manager.run_all()
         
-        # 3. Detect problems (Phases 4 & 5)
+        # 4. Detect problems (Phases 4 & 5)
         print("\n--- STAGE 2: PROBLEM DETECTION ---")
-        run_detection()
+        run_detection(deadline=deadline)
         
-        # 4. Score opportunities (Phase 6)
+        # 5. Score opportunities (Phase 6)
         print("\n--- STAGE 3: OPPORTUNITY SCORING ---")
-        score_all()
+        score_all(deadline=deadline)
         
-        # 5. Update Cloudflare Static Site
+        # 6. Update Cloudflare Static Site
         print("\n--- STAGE 4: UPDATING LIVE WEBSITE ---")
         try:
             import subprocess
@@ -44,15 +57,25 @@ def run_processor():
             subprocess.run([sys.executable, build_script], cwd=repo_root, check=True)
             
             print("Pushing to GitHub to trigger Cloudflare...")
-            subprocess.run(["git", "add", "public/index.html"], cwd=repo_root, check=True)
+            env = dict(os.environ, PATH="/usr/local/bin:/usr/bin:/bin:" + os.environ.get("PATH", ""))
+            
+            subprocess.run(["/usr/bin/git", "add", "public/index.html"], cwd=repo_root, check=True, env=env)
             # We allow git commit to fail if there are no changes, so we don't use check=True here
-            subprocess.run(["git", "commit", "-m", "chore: auto-update static site after nightly run"], cwd=repo_root)
-            subprocess.run(["git", "push"], cwd=repo_root, check=True)
+            subprocess.run(["/usr/bin/git", "commit", "-m", "chore: auto-update static site after nightly run"], cwd=repo_root, env=env)
+            subprocess.run(["/usr/bin/git", "push"], cwd=repo_root, check=True, env=env)
             print("Successfully updated live website!")
         except Exception as e:
             print(f"Failed to auto-update live website: {e}")
+            
+        # 7. Cleanup Database
+        print("\n--- STAGE 5: DATABASE CLEANUP ---")
+        try:
+            from scout.db import cleanup_old_data
+            cleanup_old_data(days=30)
+        except Exception as e:
+            print(f"Failed to cleanup database: {e}")
         
-        # 6. Mark as success
+        # 8. Mark as success
         cursor.execute(
             """
             UPDATE runs SET status = 'success', completed_at = CURRENT_TIMESTAMP, log_message = 'Pipeline finished'

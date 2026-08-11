@@ -41,7 +41,7 @@ def save_opportunity(problem_id: int, score_data: OpportunityScore) -> None:
     finally:
         conn.close()
 
-def score_all():
+def score_all(deadline: float = None):
     print("Starting SCOUT Opportunity Scorer...\n")
     problems = get_unscored_problems()
     print(f"Found {len(problems)} unscored problems.")
@@ -60,7 +60,12 @@ Here are examples of problems the user DISLIKED in the past:
 
 Use this context to align your scoring with the user's specific preferences. Give higher scores to problems similar to those they liked, and drastically lower scores to problems similar to those they disliked."""
 
+    import time
     for prob in problems:
+        if deadline and time.time() > deadline:
+            print("\n[!] Deadline reached. Stopping scoring early.")
+            break
+            
         print(f"\nScoring Problem {prob['id']}: {prob['problem_summary']}")
         
         prompt = f"""

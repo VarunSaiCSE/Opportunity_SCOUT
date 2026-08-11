@@ -75,3 +75,35 @@ def get_user_preferences() -> Dict[str, List[str]]:
     
     conn.close()
     return {"liked": liked, "disliked": disliked}
+
+def cleanup_old_data(days=30):
+    """Silently deletes raw data and un-scored problems older than `days` to prevent infinite DB bloat."""
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        print(f"Cleaning up database records older than {days} days...")
+        
+        # 1. Delete raw scrapes
+        cursor.execute("DELETE FROM raw_scrapes WHERE created_at < datetime('now', ?)", (f"-{days} days",))
+        deleted_raw = cursor.rowcount
+        
+        # 2. Delete problems that never became opportunities
+        cursor.execute(
+            """
+            DELETE FROM problems 
+            WHERE created_at < datetime('now', ?) 
+            AND id NOT IN (SELECT problem_id FROM opportunities)
+            """, (f"-{days} days",)
+        )
+        deleted_probs = cursor.rowcount
+        
+        conn.commit()
+        
+        # Reclaim disk space
+        conn.execute("VACUUM")
+        
+        print(f"Cleanup complete. Deleted {deleted_raw} raw scrapes and {deleted_probs} un-scored problems.")
+    except Exception as e:
+        print(f"Failed to cleanup database: {e}")
+    finally:
+        conn.close()

@@ -42,13 +42,13 @@ def run_delivery():
         
     conn = get_connection()
     try:
-        # Get the latest unsent opportunity
+        # Get the latest unsent opportunity from the last 24 hours
         cursor = conn.cursor()
         cursor.execute(
             """
             SELECT id, title, problem_description, score 
             FROM opportunities 
-            WHERE sent_at IS NULL 
+            WHERE sent_at IS NULL AND created_at >= datetime('now', '-24 hours')
             ORDER BY score DESC LIMIT 1
             """
         )

@@ -80,12 +80,17 @@ def get_unprocessed_discoveries():
     finally:
         conn.close()
 
-def run_pipeline():
+def run_pipeline(deadline: float = None):
     print("Starting SCOUT Pipeline (Phase 4 & 5)...\n")
     discoveries = get_unprocessed_discoveries()
     print(f"Found {len(discoveries)} unprocessed discoveries.")
     
+    import time
     for disc in discoveries:
+        if deadline and time.time() > deadline:
+            print("\n[!] Deadline reached. Stopping detection early.")
+            break
+            
         disc_id = disc['id']
         title = disc['title']
         content = disc['content']
