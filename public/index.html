@@ -1174,7 +1174,7 @@
         <!-- Sticky Footer -->
         <footer class="sticky top-0 w-full h-screen bg-black overflow-hidden border-t-2 border-silver flex items-center justify-center relative z-10">
             <!-- Parallax Background Text -->
-            <div id="parallax-text" class="absolute font-mono font-bold text-[#1a1a1a] select-none text-[10rem] md:text-[18rem] tracking-tighter transition-transform duration-75 ease-out" style="z-index: 10;">
+            <div id="parallax-text" class="absolute font-mono font-bold text-[#1a1a1a] select-none text-[10rem] md:text-[18rem] tracking-tighter transition-all duration-75 ease-out" style="z-index: 10;">
                 VARUN
             </div>
             
@@ -1267,12 +1267,14 @@
                 const slideDepth = window.innerHeight - rect.top;
                 
                 if(text && img) {
-                    // Push the text much higher overall (start negative) and move up slightly
-                    text.style.transform = `translateY(${(-150) + (slideDepth * -0.05)}px)`;
+                    // Name stays roughly in center (0 offset initially) with slight upward parallax
+                    text.style.transform = `translateY(${slideDepth * -0.06}px)`;
                     // Image comes up naturally
                     img.style.transform = `translateY(${slideDepth * -0.02}px)`;
                     
                     img.style.opacity = 1;
+                    text.style.opacity = 1;
+                    
                     if(social) {
                         social.style.opacity = 0;
                         social.style.pointerEvents = 'none';
@@ -1286,14 +1288,17 @@
                 
                 if(text && img && social) {
                     // Keep text and img transforms static at their final Phase 1 positions
-                    text.style.transform = `translateY(${(-150) + (window.innerHeight * -0.05)}px)`;
+                    text.style.transform = `translateY(${window.innerHeight * -0.06}px)`;
                     img.style.transform = `translateY(${window.innerHeight * -0.02}px)`;
                     
                     // Fade out the image rapidly
                     img.style.opacity = Math.max(0, 1 - (scrollProgress * 2.5)); 
                     
+                    // Fade out the text with a slight lag
+                    text.style.opacity = scrollProgress > 0.15 ? Math.max(0, 1 - ((scrollProgress - 0.15) * 2)) : 1;
+                    
                     // Fade in the social banner smoothly
-                    social.style.opacity = scrollProgress > 0.3 ? (scrollProgress - 0.3) * 1.5 : 0;
+                    social.style.opacity = scrollProgress > 0.4 ? (scrollProgress - 0.4) * 2 : 0;
                     social.style.pointerEvents = scrollProgress > 0.5 ? 'auto' : 'none';
                 }
             }
