@@ -82,3 +82,15 @@ Do not include any markdown formatting, explanations, or extra text. Output ONLY
             
     raise LLMError("Failed to generate structured output.")
 
+def unload_model(model_name: str = "qwen2.5:14b") -> None:
+    """
+    Forcefully unloads the model from Mac's unified memory by setting keep_alive to 0.
+    """
+    try:
+        with httpx.Client(timeout=10) as client:
+            client.post(OLLAMA_API_URL, json={
+                "model": model_name,
+                "keep_alive": 0
+            })
+    except Exception as e:
+        print(f"Failed to unload model {model_name}: {e}")

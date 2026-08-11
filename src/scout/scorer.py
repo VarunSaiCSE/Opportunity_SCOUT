@@ -93,5 +93,10 @@ Use this context to align your scoring with the user's specific preferences. Giv
         except LLMError as e:
             print(f"  -> Failed to score problem: {e}")
 
+    print("Scoring complete! Forcefully unloading LLM from RAM...")
+    from scout.llm import unload_model
+    unload_model()
+    print("LLM Unloaded successfully.")
+
 if __name__ == "__main__":
     score_all()
