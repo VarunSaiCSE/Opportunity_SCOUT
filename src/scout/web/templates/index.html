@@ -120,7 +120,7 @@
             body: `vote=${value}`
         }).then(async response => {
             if(response.ok) {
-                // Visual feedback
+                // Visual feedback (Button blink)
                 const originalBg = btn.style.backgroundColor;
                 btn.style.backgroundColor = '#a855f7';
                 btn.style.color = 'black';
@@ -128,6 +128,13 @@
                     btn.style.backgroundColor = originalBg;
                     btn.style.color = '';
                 }, 500);
+
+                // Toast Notification
+                const toast = document.createElement('div');
+                toast.textContent = value === 1 ? '[ UPVOTE RECORDED IN CLOUD ]' : '[ DOWNVOTE RECORDED IN CLOUD ]';
+                toast.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#a855f7] text-black font-mono font-bold text-xs px-4 py-2 z-50 uppercase tracking-widest border border-white';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 5000);
             } else {
                 const text = await response.text();
                 alert(`Error ${response.status}: ${text}`);
