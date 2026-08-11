@@ -113,9 +113,43 @@
 
     <div id="grid-blinks" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:1;"></div>
 
-    <main class="max-w-6xl mx-auto px-4 py-8 relative z-10">
+    <main class="max-w-6xl mx-auto px-4 py-8 relative z-10 flex-grow min-h-screen">
         {% block content %}{% endblock %}
     </main>
+    
+    <!-- Footer with Parallax -->
+    <footer class="relative w-full h-[600px] bg-black overflow-hidden border-t-2 border-silver flex items-center justify-center mt-20 relative z-10">
+        <!-- Parallax Background Text -->
+        <div id="parallax-text" class="absolute font-mono font-bold text-[#1a1a1a] select-none text-[10rem] md:text-[18rem] tracking-tighter" style="z-index: 10;">
+            VARUN
+        </div>
+        
+        <!-- Parallax Foreground Image -->
+        <div id="parallax-img" class="absolute bottom-0 z-20 flex flex-col items-center">
+            <!-- Using a fallback to a placeholder if the image is missing -->
+            <img src="/assets/varun.png" alt="Varun" class="h-80 md:h-[500px] object-contain filter grayscale contrast-125" onerror="this.src='https://via.placeholder.com/400x500/000000/C0C0C0?text=PLACE+IMAGE+AT+public/assets/varun.png'">
+        </div>
+        
+        <!-- Footer Content Overlay -->
+        <div class="absolute bottom-0 w-full h-48 bg-gradient-to-t from-black via-black/80 to-transparent z-30"></div>
+        
+        <div class="absolute bottom-8 w-full px-8 max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-end z-40 font-mono text-xs text-silver-dark gap-4">
+            <div class="text-center md:text-left">
+                <p class="text-silver mb-1 font-bold">SCOUT INTELLIGENCE ENGINE v1.0</p>
+                <p>AUTONOMOUS RESEARCH AGENT</p>
+            </div>
+            
+            <div class="flex gap-4">
+                <a href="#" class="hover:text-white transition-colors">[ X / TWITTER ]</a>
+                <a href="#" class="hover:text-white transition-colors">[ PORTFOLIO ]</a>
+            </div>
+            
+            <div class="text-center md:text-right">
+                <p class="text-silver mb-1 font-bold">ARCHITECT: VARUN SAI ANDRA</p>
+                <p>SYSTEM STATUS: OPTIMAL</p>
+            </div>
+        </div>
+    </footer>
     
     <style>
         @keyframes blink-anim {
@@ -155,6 +189,30 @@
         }
         
         initGridBlinks();
+        
+        // Parallax Effect for Footer
+        window.addEventListener('scroll', () => {
+            const footer = document.querySelector('footer');
+            if (!footer) return;
+            
+            const footerRect = footer.getBoundingClientRect();
+            
+            // Only animate if footer is somewhat visible in viewport
+            if (footerRect.top < window.innerHeight) {
+                // scrollDepth is how far into the footer we have scrolled
+                const scrollDepth = window.innerHeight - footerRect.top;
+                
+                const text = document.getElementById('parallax-text');
+                const img = document.getElementById('parallax-img');
+                
+                if(text && img) {
+                    // Text moves down slower (background) - creating depth
+                    text.style.transform = `translateY(${scrollDepth * 0.25}px)`;
+                    // Image moves up faster (foreground) - popping out
+                    img.style.transform = `translateY(${scrollDepth * -0.05}px)`;
+                }
+            }
+        });
     </script>
 </body>
 </html>
