@@ -55,23 +55,23 @@ def get_user_preferences() -> Dict[str, List[str]]:
     
     # Get 3 liked problems
     cursor.execute("""
-        SELECT p.description 
+        SELECT p.problem_summary 
         FROM opportunities o 
         JOIN problems p ON o.problem_id = p.id 
         WHERE o.user_vote = 1 
         ORDER BY o.created_at DESC LIMIT 3
     """)
-    liked = [row['description'] for row in cursor.fetchall()]
+    liked = [row['problem_summary'] for row in cursor.fetchall()]
     
     # Get 3 disliked problems
     cursor.execute("""
-        SELECT p.description 
+        SELECT p.problem_summary 
         FROM opportunities o 
         JOIN problems p ON o.problem_id = p.id 
         WHERE o.user_vote = -1 
         ORDER BY o.created_at DESC LIMIT 3
     """)
-    disliked = [row['description'] for row in cursor.fetchall()]
+    disliked = [row['problem_summary'] for row in cursor.fetchall()]
     
     conn.close()
     return {"liked": liked, "disliked": disliked}

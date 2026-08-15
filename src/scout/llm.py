@@ -1,5 +1,6 @@
 import json
 import httpx
+import time
 from pydantic import BaseModel, ValidationError
 from typing import Type, TypeVar, Any
 
@@ -70,15 +71,18 @@ Do not include any markdown formatting, explanations, or extra text. Output ONLY
             parsed_data = json.loads(response_text)
             return response_model.model_validate(parsed_data)
             
-        except httpx.RequestError as e:
+        except httpx.HTTPError as e:
             if attempt == max_retries - 1:
                 raise LLMError(f"Failed to connect to Ollama after {max_retries} attempts: {e}")
+            time.sleep(5)  # Wait for Ollama to recover (e.g. from a 500 Server Error)
         except json.JSONDecodeError as e:
             if attempt == max_retries - 1:
                 raise LLMError(f"Ollama returned invalid JSON: {e}\nResponse was: {response_text}")
+            time.sleep(2)
         except ValidationError as e:
             if attempt == max_retries - 1:
                 raise LLMError(f"Ollama returned JSON that doesn't match the schema: {e}\nResponse was: {response_text}")
+            time.sleep(2)
             
     raise LLMError("Failed to generate structured output.")
 
