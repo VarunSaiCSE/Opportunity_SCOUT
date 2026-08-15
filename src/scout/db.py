@@ -84,7 +84,7 @@ def cleanup_old_data(days=30):
         print(f"Cleaning up database records older than {days} days...")
         
         # 1. Delete raw scrapes
-        cursor.execute("DELETE FROM raw_scrapes WHERE created_at < datetime('now', ?)", (f"-{days} days",))
+        cursor.execute("DELETE FROM discoveries WHERE collection_timestamp < datetime('now', ?)", (f"-{days} days",))
         deleted_raw = cursor.rowcount
         
         # 2. Delete problems that never became opportunities
