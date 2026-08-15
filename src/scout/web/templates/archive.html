@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+
+    /* Ensure cards can contain absolute positioned elements */
+    .grid-card {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+    }
+</style>
+
+<!-- Header Section -->
+<div class="mb-12 strict-border p-6 flex flex-col md:flex-row md:items-start justify-between">
+    <div>
+        <h1 class="font-mono text-3xl font-bold tracking-widest text-silver mb-2 uppercase">
+            [ ARCHIVES ]
+        </h1>
+        <p class="font-mono text-sm text-silver-dark">
+            // HISTORICAL_RECORDS | PREVIOUS_DIGESTS
+        </p>
+    </div>
+</div>
+
+{% for date_str, opportunities in archives.items() %}
+    <!-- Date Header -->
+    <div class="flex items-center gap-4 mb-6 {% if not loop.first %}mt-16{% endif %}">
+        <h2 class="font-mono text-xl font-bold tracking-widest text-silver uppercase">{{ date_str }}</h2>
+        <div class="flex-grow border-t border-silver-dark border-dashed"></div>
+        <div class="font-mono text-sm text-silver-dark">{{ opportunities|length }} ENTITIES</div>
+    </div>
+
+    <!-- Grid Layout: 3 Columns -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for opp in opportunities %}
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-{{ opp.id }}"
+             onmousedown="startPress(event, '{{ opp.url }}', 'desc-{{ opp.id }}', 'card-{{ opp.id }}')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, '{{ opp.url }}', 'desc-{{ opp.id }}', 'card-{{ opp.id }}')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:{{ opp.severity }}</span>
+                        {% if opp.sent_at %}
+                        <span class="text-black bg-silver-dark px-1">PUSHED</span>
+                        {% endif %}
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        {% if opp.source_type == 'hn' %}
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        {% elif opp.source_type == 'reddit' %}
+                            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                        {% else %}
+                            <i data-lucide="rss" class="w-3.5 h-3.5"></i>
+                        {% endif %}
+                        <span>[{{ opp.source_name }}]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    {{ opp.score }}
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                {{ opp.title }}
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                {{ opp.problem_description }}
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: {{ opp.target_audience }}
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('{{ opp.id }}', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('{{ opp.id }}', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('{{ opp.id }}', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('{{ opp.id }}', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-{{ opp.id }}" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                {{ opp.problem_description }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endfor %}
+
+{% if not archives %}
+<div class="text-center font-mono text-silver-dark mt-20">
+    // NO_ARCHIVED_RECORDS_FOUND
+</div>
+{% endif %}
+
+<script>
+    function vote(opportunityId, value, event) {
+        event.stopPropagation(); // Prevent card click logic
+        const btn = event.currentTarget;
+        
+        fetch(`/api/vote/${opportunityId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `vote=${value}`
+        }).then(async response => {
+            if(response.ok) {
+                // Visual feedback (Button blink)
+                const originalBg = btn.style.backgroundColor;
+                btn.style.backgroundColor = '#a855f7';
+                btn.style.color = 'black';
+                setTimeout(() => {
+                    btn.style.backgroundColor = originalBg;
+                    btn.style.color = '';
+                }, 500);
+
+                // Toast Notification
+                const toast = document.createElement('div');
+                toast.textContent = value === 1 ? '[ UPVOTE RECORDED IN CLOUD ]' : '[ DOWNVOTE RECORDED IN CLOUD ]';
+                toast.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#a855f7] text-black font-mono font-bold text-xs px-4 py-2 z-50 uppercase tracking-widest border border-white';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 5000);
+            } else {
+                const text = await response.text();
+                alert(`Error ${response.status}: ${text}`);
+            }
+        }).catch(e => {
+            alert(`Network Error: ${e.message}`);
+        });
+    }
+
+    let pressTimer;
+    let isLongPress = false;
+    let targetUrl = '';
+    let currentCardId = '';
+    
+    function startPress(event, url, descId, cardId) {
+        // Prevent default to stop text selection on long press
+        if (event.type === 'touchstart') {
+            // Optional: event.preventDefault(); might block scrolling
+        }
+        
+        isLongPress = false;
+        targetUrl = url;
+        currentCardId = cardId;
+        pressTimer = window.setTimeout(function() {
+            isLongPress = true;
+            document.getElementById(descId).classList.toggle('open');
+            const preview = document.getElementById(cardId).querySelector('.clamp-3');
+            if (preview) {
+                preview.style.display = document.getElementById(descId).classList.contains('open') ? 'none' : '-webkit-box';
+            }
+        }, 500); 
+    }
+    
+    function endPress(event) {
+        clearTimeout(pressTimer);
+        if (!isLongPress && targetUrl && currentCardId) {
+            // Synchronous window.open is allowed by browsers (bypasses popup blocker)
+            window.open(targetUrl, '_blank');
+        }
+        targetUrl = '';
+        currentCardId = '';
+    }
+    
+    function cancelPress() {
+        clearTimeout(pressTimer);
+        targetUrl = '';
+        currentCardId = '';
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOUT Intelligence - Terminal</title>
+    
+    <!-- Google Fonts: Space Mono and Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    colors: {
+                        background: '#000000',
+                        silver: {
+                            DEFAULT: '#C0C0C0',
+                            dark: '#808080',
+                            light: '#E0E0E0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            background-color: #000000;
+            color: #C0C0C0;
+            /* Old school grid background */
+            background-image: 
+                linear-gradient(rgba(192, 192, 192, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(192, 192, 192, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow-x: hidden;
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        /* Strict grid components */
+        .strict-border {
+            border: 1px solid #C0C0C0;
+            background-color: #000000;
+        }
+
+        .strict-border-b { border-bottom: 1px solid #C0C0C0; }
+        .strict-border-r { border-right: 1px solid #C0C0C0; }
+        .strict-border-t { border-top: 1px solid #C0C0C0; }
+
+        /* Japanese grid style card */
+        .grid-card {
+            border: 1px solid #808080;
+            background-color: #000;
+            transition: background-color 0s, color 0s;
+            cursor: pointer;
+        }
+
+        .grid-card:hover {
+            background-color: #C0C0C0;
+            color: #000000;
+        }
+        
+        .grid-card:hover * {
+            color: #000000 !important;
+            border-color: #000000 !important;
+        }
+
+        .description-reveal {
+            display: none;
+            border-top: 1px solid #808080;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .description-reveal.open {
+            display: block;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <header class="strict-border-b bg-black sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex items-center h-12">
+            <div class="w-12 h-full flex items-center justify-center strict-border-r relative z-20">
+                <i data-lucide="radar" class="w-5 h-5 text-silver"></i>
+            </div>
+            <div class="px-4 h-full flex items-center strict-border-r relative z-20">
+                <span class="font-mono font-bold text-silver tracking-widest uppercase">SCOUT</span>
+            </div>
+            <div class="px-4 h-full flex items-center hidden md:flex text-sm font-mono text-silver-dark relative z-20 strict-border-r">
+                <span>SYSTEM_STATUS: ONLINE</span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <a href="index.html" class="px-4 h-full flex items-center gap-2 hover:bg-silver hover:text-black transition-colors strict-border-r relative z-20 group text-silver">
+                <i data-lucide="sun" class="w-4 h-4"></i>
+                <span class="text-xs font-mono font-bold tracking-widest uppercase">TODAY</span>
+            </a>
+            <a href="archive.html" class="px-4 h-full flex items-center gap-2 hover:bg-silver hover:text-black transition-colors relative z-20 group bg-silver text-black">
+                <i data-lucide="archive" class="w-4 h-4"></i>
+                <span class="text-xs font-mono font-bold tracking-widest uppercase">ARCHIVES</span>
+            </a>
+            
+            <a href="https://github.com/VarunSaiCSE/Opportunity_SCOUT" target="_blank" class="ml-auto px-4 h-full flex items-center gap-2 hover:bg-silver hover:text-black transition-colors strict-border-l relative z-20 group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-silver group-hover:text-black"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.24C15.7 14.5 19 13.9 19 8.5c0-1.5-.5-2.8-1.5-3.8.1-.3.7-1.8-.1-3.8 0 0-1.2-.4-3.9 1.4a12.1 12.1 0 0 0-7 0C3.9 1.1 2.7 1.5 2.7 1.5c-.8 2-.2 3.5-.1 3.8-1 1-1.5 2.3-1.5 3.8 0 5.4 3.3 6 5.4 6.3-.6.6-1 1.5-1 3.2V22"/><path d="M9 19.5c-4.5 1.5-5-2-7-2"/></svg>
+                <span class="text-xs font-mono font-bold">VarunSaiCSE</span>
+            </a>
+        </div>
+    </header>
+
+    <div id="grid-blinks" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:1;"></div>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 relative z-10 flex-grow min-h-screen">
+        
+<style>
+
+    /* Ensure cards can contain absolute positioned elements */
+    .grid-card {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+    }
+</style>
+
+<!-- Header Section -->
+<div class="mb-12 strict-border p-6 flex flex-col md:flex-row md:items-start justify-between">
+    <div>
+        <h1 class="font-mono text-3xl font-bold tracking-widest text-silver mb-2 uppercase">
+            [ ARCHIVES ]
+        </h1>
+        <p class="font-mono text-sm text-silver-dark">
+            // HISTORICAL_RECORDS | PREVIOUS_DIGESTS
+        </p>
+    </div>
+</div>
+
+
+    <!-- Date Header -->
+    <div class="flex items-center gap-4 mb-6 ">
+        <h2 class="font-mono text-xl font-bold tracking-widest text-silver uppercase">August 10, 2026</h2>
+        <div class="flex-grow border-t border-silver-dark border-dashed"></div>
+        <div class="font-mono text-sm text-silver-dark">7 ENTITIES</div>
+    </div>
+
+    <!-- Grid Layout: 3 Columns -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-15"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49230194', 'desc-15', 'card-15')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49230194', 'desc-15', 'card-15')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:8</span>
+                        
+                        <span class="text-black bg-silver-dark px-1">PUSHED</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    7.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                LLM Work Chaos
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                LLMs marketed as work assistants are failing to handle non-code aspects of work, potentially causing chaos in organizations.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Organizations using or considering LLMs for work assistance
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('15', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('15', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('15', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('15', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-15" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                LLMs marketed as work assistants are failing to handle non-code aspects of work, potentially causing chaos in organizations.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-14"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49230276', 'desc-14', 'card-14')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49230276', 'desc-14', 'card-14')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:8</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                AI Fraud Detector
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Scammers use AI models to commit fraud, making it difficult for users of AI chatbots and victims of online scams to distinguish between human and AI interactions.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Users of AI chatbots and victims of online scams
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('14', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('14', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('14', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('14', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-14" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Scammers use AI models to commit fraud, making it difficult for users of AI chatbots and victims of online scams to distinguish between human and AI interactions.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-13"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49231052', 'desc-13', 'card-13')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49231052', 'desc-13', 'card-13')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:8</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                Assisted Driving for Elders
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Elderly parents need an assisted driving vehicle to ensure their safety and prevent fatigue, targeting adult children concerned about elderly drivers.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Adult children with elderly parents who drive
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('13', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('13', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('13', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('13', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-13" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Elderly parents need an assisted driving vehicle to ensure their safety and prevent fatigue, targeting adult children concerned about elderly drivers.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-10"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49232797', 'desc-10', 'card-10')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49232797', 'desc-10', 'card-10')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:5</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                CLI AI Query
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Users seeking quick, command-line-based access to AI services lack readily available solutions.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Users who prefer command-line interfaces for quick queries
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('10', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('10', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('10', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('10', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-10" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Users seeking quick, command-line-based access to AI services lack readily available solutions.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-9"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49235224', 'desc-9', 'card-9')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49235224', 'desc-9', 'card-9')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:8</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                SecureAIAssistant
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Users of multiple AI coding clients face privacy risks when assistants access each other's directories without permission.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Users of AI coding clients who have installed multiple coding assistants on their machine.
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('9', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('9', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('9', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('9', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-9" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Users of multiple AI coding clients face privacy risks when assistants access each other's directories without permission.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-11"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49232136', 'desc-11', 'card-11')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49232136', 'desc-11', 'card-11')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:9</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    5.0
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                AI Integrity Monitor
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                The AI industry faces systemic issues such as ideological illusions, unsustainable financial models, environmental degradation, and ethical violations, impacting society at large.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Society at large, including consumers, businesses, policymakers, and technologists.
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('11', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('11', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('11', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('11', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-11" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                The AI industry faces systemic issues such as ideological illusions, unsustainable financial models, environmental degradation, and ethical violations, impacting society at large.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-12"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49231405', 'desc-12', 'card-12')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49231405', 'desc-12', 'card-12')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:5</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    4.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                Smart Door Access
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Businesses frequently leave one side of double doors locked, creating inconvenience for customers and employees. This solution aims to streamline access control.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Business owners and managers
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('12', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('12', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('12', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('12', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-12" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Businesses frequently leave one side of double doors locked, creating inconvenience for customers and employees. This solution aims to streamline access control.
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Date Header -->
+    <div class="flex items-center gap-4 mb-6 mt-16">
+        <h2 class="font-mono text-xl font-bold tracking-widest text-silver uppercase">August 09, 2026</h2>
+        <div class="flex-grow border-t border-silver-dark border-dashed"></div>
+        <div class="font-mono text-sm text-silver-dark">8 ENTITIES</div>
+    </div>
+
+    <!-- Grid Layout: 3 Columns -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-4"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49226913', 'desc-4', 'card-4')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49226913', 'desc-4', 'card-4')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:8</span>
+                        
+                        <span class="text-black bg-silver-dark px-1">PUSHED</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    7.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                AI Fluency Gap
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Professionals using AI report higher proficiency than their actual performance, leading to significant discrepancies within teams despite uniform training.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Professionals using AI in their work, particularly those in product management, engineering, HR, and other roles requiring regular interaction with AI technology.
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('4', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('4', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('4', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('4', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-4" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Professionals using AI report higher proficiency than their actual performance, leading to significant discrepancies within teams despite uniform training.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-8"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49224798', 'desc-8', 'card-8')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49224798', 'desc-8', 'card-8')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:7</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                Formal Abstraction API
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Current formal module abstraction methods struggle to identify and address duplication in agentic programming, hindering efficiency and effectiveness.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Software developers and researchers working on formal abstractions and agentic programming
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('8', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('8', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('8', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('8', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-8" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Current formal module abstraction methods struggle to identify and address duplication in agentic programming, hindering efficiency and effectiveness.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-7"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49226365', 'desc-7', 'card-7')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49226365', 'desc-7', 'card-7')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:7</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                PrivacyGuard
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Individuals are concerned about unwanted BLE trackers being placed in their personal belongings and struggle with detecting and removing them.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Individuals concerned about privacy and security, especially those who have purchased second-hand items or are worried about stalking.
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('7', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('7', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('7', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('7', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-7" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Individuals are concerned about unwanted BLE trackers being placed in their personal belongings and struggle with detecting and removing them.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-5"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49226638', 'desc-5', 'card-5')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49226638', 'desc-5', 'card-5')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:7</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                PowerPC Community Hub
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                The Open POWER Foundation website lacks engagement and resources compared to riscv.org, missing out on potential contributors and users in the PowerPC ecosystem.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: People who rely on or are interested in the PowerPC ecosystem
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('5', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('5', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('5', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('5', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-5" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                The Open POWER Foundation website lacks engagement and resources compared to riscv.org, missing out on potential contributors and users in the PowerPC ecosystem.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-3"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49227024', 'desc-3', 'card-3')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49227024', 'desc-3', 'card-3')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:6</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                Agent-Driven Testing
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Traditional CI/CD testing is becoming less effective for developers using agent-driven coding, necessitating local agent-driven code testing.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Developers and engineers who use agent-driven coding in their workflow
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('3', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('3', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('3', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('3', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-3" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Traditional CI/CD testing is becoming less effective for developers using agent-driven coding, necessitating local agent-driven code testing.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-2"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49227632', 'desc-2', 'card-2')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49227632', 'desc-2', 'card-2')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:8</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                GeoToolRevive
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Users are losing access to familiar, reliable tools like Google Earth Pro as it will no longer be available for download.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Long-term users of Google Earth Pro and other discontinued tools
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('2', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('2', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('2', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('2', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-2" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Users are losing access to familiar, reliable tools like Google Earth Pro as it will no longer be available for download.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-1"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49227635', 'desc-1', 'card-1')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49227635', 'desc-1', 'card-1')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:7</span>
+                        
+                        <span class="text-black bg-silver-dark px-1">PUSHED</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    6.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                Disk Scalability for Hetzner
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Developers and system administrators face limitations in disk capacity per volume when migrating infrastructure to Hetzner, hindering database scalability.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Developers and system administrators dealing with large-scale data storage on Hetzner servers.
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('1', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('1', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('1', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('1', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-1" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Developers and system administrators face limitations in disk capacity per volume when migrating infrastructure to Hetzner, hindering database scalability.
+            </div>
+        </div>
+        
+        <div class="grid-card p-5 flex flex-col min-h-[280px]"
+             id="card-6"
+             onmousedown="startPress(event, 'https://news.ycombinator.com/item?id=49226441', 'desc-6', 'card-6')" 
+             onmouseup="endPress(event)" 
+             onmouseleave="cancelPress()"
+             ontouchstart="startPress(event, 'https://news.ycombinator.com/item?id=49226441', 'desc-6', 'card-6')"
+             ontouchend="endPress(event)">
+             
+            <!-- Top Row -->
+            <div class="flex justify-between items-start mb-4 border-b border-silver-dark pb-3">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-3 font-mono text-xs text-silver-dark uppercase">
+                        <span>SEV:3</span>
+                        
+                    </div>
+                    <!-- Source Logo & Name -->
+                    <div class="flex items-center gap-1.5 font-mono text-xs text-silver uppercase mt-1">
+                        
+                            <i data-lucide="square-terminal" class="w-3.5 h-3.5"></i>
+                        
+                        <span>[HN: Ask HN]</span>
+                    </div>
+                </div>
+                
+                <div class="font-mono text-3xl font-bold text-silver leading-none">
+                    4.5
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="font-sans text-lg font-medium text-silver mb-3 leading-snug">
+                Polyglot Books
+            </h3>
+            
+            <!-- Preview of Description -->
+            <p class="font-sans text-sm text-silver-dark clamp-3 mb-4">
+                Polyglots lack books written simultaneously in multiple languages, limiting their learning experience.
+            </p>
+            
+            <!-- Bottom Info & Voting -->
+            <div class="mt-auto flex justify-between items-end pt-4 border-t border-silver-dark/50">
+                <div class="font-mono text-xs text-silver-dark uppercase">
+                    TARGET: Polyglots
+                </div>
+                
+                <div class="flex gap-2 relative z-30">
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('6', 1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('6', 1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Upvote (More like this)">
+                        <i data-lucide="arrow-up" class="w-4 h-4 text-silver"></i>
+                    </button>
+                    <button onmousedown="event.stopPropagation()" onmouseup="event.stopPropagation(); vote('6', -1, event)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation(); vote('6', -1, event)" class="p-1 hover:bg-[#a855f7] hover:text-black rounded transition-colors" title="Downvote (Less like this)">
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-silver"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Full Description (Hidden by default, shown on long press) -->
+            <div id="desc-6" class="description-reveal font-sans text-sm leading-relaxed text-silver-light">
+                <div class="font-mono text-xs text-silver mb-2">// FULL_DECRYPT_COMPLETE</div>
+                Polyglots lack books written simultaneously in multiple languages, limiting their learning experience.
+            </div>
+        </div>
+        
+    </div>
+
+
+
+
+<script>
+    function vote(opportunityId, value, event) {
+        event.stopPropagation(); // Prevent card click logic
+        const btn = event.currentTarget;
+        
+        fetch(`/api/vote/${opportunityId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `vote=${value}`
+        }).then(async response => {
+            if(response.ok) {
+                // Visual feedback (Button blink)
+                const originalBg = btn.style.backgroundColor;
+                btn.style.backgroundColor = '#a855f7';
+                btn.style.color = 'black';
+                setTimeout(() => {
+                    btn.style.backgroundColor = originalBg;
+                    btn.style.color = '';
+                }, 500);
+
+                // Toast Notification
+                const toast = document.createElement('div');
+                toast.textContent = value === 1 ? '[ UPVOTE RECORDED IN CLOUD ]' : '[ DOWNVOTE RECORDED IN CLOUD ]';
+                toast.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#a855f7] text-black font-mono font-bold text-xs px-4 py-2 z-50 uppercase tracking-widest border border-white';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 5000);
+            } else {
+                const text = await response.text();
+                alert(`Error ${response.status}: ${text}`);
+            }
+        }).catch(e => {
+            alert(`Network Error: ${e.message}`);
+        });
+    }
+
+    let pressTimer;
+    let isLongPress = false;
+    let targetUrl = '';
+    let currentCardId = '';
+    
+    function startPress(event, url, descId, cardId) {
+        // Prevent default to stop text selection on long press
+        if (event.type === 'touchstart') {
+            // Optional: event.preventDefault(); might block scrolling
+        }
+        
+        isLongPress = false;
+        targetUrl = url;
+        currentCardId = cardId;
+        pressTimer = window.setTimeout(function() {
+            isLongPress = true;
+            document.getElementById(descId).classList.toggle('open');
+            const preview = document.getElementById(cardId).querySelector('.clamp-3');
+            if (preview) {
+                preview.style.display = document.getElementById(descId).classList.contains('open') ? 'none' : '-webkit-box';
+            }
+        }, 500); 
+    }
+    
+    function endPress(event) {
+        clearTimeout(pressTimer);
+        if (!isLongPress && targetUrl && currentCardId) {
+            // Synchronous window.open is allowed by browsers (bypasses popup blocker)
+            window.open(targetUrl, '_blank');
+        }
+        targetUrl = '';
+        currentCardId = '';
+    }
+    
+    function cancelPress() {
+        clearTimeout(pressTimer);
+        targetUrl = '';
+        currentCardId = '';
+    }
+</script>
+
+    </main>
+    
+    <!-- Footer Scroll Container (200vh tall to allow sticky scrolling) -->
+    <div id="footer-scroll-container" class="relative w-full h-[200vh] mt-20">
+        <!-- Sticky Footer -->
+        <footer class="sticky top-0 w-full h-screen bg-black overflow-hidden border-t-2 border-silver flex items-center justify-center relative z-10">
+            <!-- Parallax Background Text -->
+            <div id="parallax-text" class="absolute font-mono font-bold text-[#1a1a1a] select-none text-[10rem] md:text-[18rem] tracking-tighter transition-all duration-75 ease-out" style="z-index: 10;">
+                VARUN
+            </div>
+            
+            <!-- Parallax Foreground Image -->
+            <div id="parallax-img" class="absolute bottom-0 z-20 flex flex-col items-center transition-opacity duration-75 ease-out">
+                <img src="/assets/varun.png" alt="Varun" class="h-[50vh] md:h-[70vh] object-contain filter grayscale contrast-125" onerror="this.src='https://via.placeholder.com/400x500/000000/C0C0C0?text=PLACE+IMAGE+AT+public/assets/varun.png'">
+            </div>
+            
+            <!-- Fade in Social Banner -->
+            <div id="social-banner" class="absolute inset-0 z-50 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-75 ease-out" style="padding-bottom: 10vh;">
+                <div class="flex flex-wrap justify-center gap-12 md:gap-24">
+                    <a href="https://github.com/VarunSaiCSE" target="_blank" class="flex flex-col items-center gap-6 text-silver hover:text-white transition-colors group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.24C15.7 14.5 19 13.9 19 8.5c0-1.5-.5-2.8-1.5-3.8.1-.3.7-1.8-.1-3.8 0 0-1.2-.4-3.9 1.4a12.1 12.1 0 0 0-7 0C3.9 1.1 2.7 1.5 2.7 1.5c-.8 2-.2 3.5-.1 3.8-1 1-1.5 2.3-1.5 3.8 0 5.4 3.3 6 5.4 6.3-.6.6-1 1.5-1 3.2V22"/><path d="M9 19.5c-4.5 1.5-5-2-7-2"/></svg>
+                        <span class="font-mono text-xl md:text-2xl font-bold tracking-widest">GITHUB</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/varunsaiandra/" target="_blank" class="flex flex-col items-center gap-6 text-silver hover:text-white transition-colors group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                        <span class="font-mono text-xl md:text-2xl font-bold tracking-widest">LINKEDIN</span>
+                    </a>
+                    <a href="mailto:andra.varunsai@gmail.com" class="flex flex-col items-center gap-6 text-silver hover:text-white transition-colors group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        <span class="font-mono text-xl md:text-2xl font-bold tracking-widest">EMAIL</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Footer Content Overlay -->
+            <div class="absolute bottom-0 w-full h-48 bg-gradient-to-t from-black via-black/80 to-transparent z-30 pointer-events-none"></div>
+            
+            <div class="absolute bottom-8 w-full px-8 max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-end z-40 font-mono text-xs text-silver-dark gap-4 pointer-events-none">
+                <div class="text-center md:text-left pointer-events-auto">
+                    <p class="text-silver mb-1 font-bold">SCOUT INTELLIGENCE ENGINE v1.0</p>
+                    <p>AUTONOMOUS RESEARCH AGENT</p>
+                </div>
+                
+                <div class="flex gap-4 pointer-events-auto hidden md:flex">
+                    <a href="mailto:andra.varunsai@gmail.com" class="hover:text-white transition-colors">[ EMAIL ]</a>
+                </div>
+                
+                <div class="text-center md:text-right pointer-events-auto">
+                    <p class="text-silver mb-1 font-bold">ARCHITECT: VARUN SAI ANDRA</p>
+                    <p>SYSTEM STATUS: OPTIMAL</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <style>
+        @keyframes blink-anim {
+            0% { opacity: 0; box-shadow: 0 0 0px #a855f7; }
+            50% { opacity: 0.6; box-shadow: 0 0 10px #a855f7; }
+            100% { opacity: 0; box-shadow: 0 0 0px #a855f7; }
+        }
+    </style>
+    <script>
+        lucide.createIcons();
+        
+        // Purple Grid Blinking Effect
+        function initGridBlinks() {
+            const container = document.getElementById('grid-blinks');
+            setInterval(() => {
+                const cols = Math.floor(window.innerWidth / 20);
+                const rows = Math.floor(window.innerHeight / 20);
+                
+                const x = Math.floor(Math.random() * cols) * 20;
+                const y = Math.floor(Math.random() * rows) * 20;
+                
+                const blinker = document.createElement('div');
+                blinker.style.position = 'absolute';
+                blinker.style.left = x + 'px';
+                blinker.style.top = y + 'px';
+                blinker.style.width = '20px';
+                blinker.style.height = '20px';
+                blinker.style.backgroundColor = '#a855f7'; // Purple
+                blinker.style.opacity = '0';
+                blinker.style.animation = 'blink-anim 2s ease-in-out forwards';
+                
+                container.appendChild(blinker);
+                
+                // Cleanup
+                setTimeout(() => blinker.remove(), 2000);
+            }, 300); // A new blink every 300ms
+        }
+        
+        initGridBlinks();
+        
+        // Parallax & Sticky Scroll Effect for Footer
+        window.addEventListener('scroll', () => {
+            const container = document.getElementById('footer-scroll-container');
+            if (!container) return;
+            
+            const rect = container.getBoundingClientRect();
+            const text = document.getElementById('parallax-text');
+            const img = document.getElementById('parallax-img');
+            const social = document.getElementById('social-banner');
+            
+            // Phase 1: Footer sliding into view
+            if (rect.top <= window.innerHeight && rect.top > 0) {
+                const slideDepth = window.innerHeight - rect.top;
+                
+                if(text && img) {
+                    // Name stays roughly in center (0 offset initially) with slight upward parallax
+                    text.style.transform = `translateY(${slideDepth * -0.06}px)`;
+                    // Image comes up naturally
+                    img.style.transform = `translateY(${slideDepth * -0.02}px)`;
+                    
+                    img.style.opacity = 1;
+                    text.style.opacity = 1;
+                    
+                    if(social) {
+                        social.style.opacity = 0;
+                        social.style.pointerEvents = 'none';
+                    }
+                }
+            }
+            
+            // Phase 2: Footer is stuck to top, scrolling the remaining 100vh container space
+            if (rect.top <= 0) {
+                const scrollProgress = Math.min(1, Math.max(0, -rect.top / window.innerHeight));
+                
+                if(text && img && social) {
+                    // Keep text and img transforms static at their final Phase 1 positions
+                    text.style.transform = `translateY(${window.innerHeight * -0.06}px)`;
+                    img.style.transform = `translateY(${window.innerHeight * -0.02}px)`;
+                    
+                    // Fade out the image rapidly
+                    img.style.opacity = Math.max(0, 1 - (scrollProgress * 2.5)); 
+                    
+                    // Fade out the text with a slight lag
+                    text.style.opacity = scrollProgress > 0.15 ? Math.max(0, 1 - ((scrollProgress - 0.15) * 2)) : 1;
+                    
+                    // Fade in the social banner smoothly
+                    social.style.opacity = scrollProgress > 0.4 ? (scrollProgress - 0.4) * 2 : 0;
+                    social.style.pointerEvents = scrollProgress > 0.5 ? 'auto' : 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

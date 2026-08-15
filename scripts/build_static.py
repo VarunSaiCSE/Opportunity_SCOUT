@@ -1,4 +1,5 @@
 import os
+import datetime
 from jinja2 import Environment, FileSystemLoader
 from scout.db import get_connection
 
@@ -8,12 +9,9 @@ def build_static_site():
     # 1. Setup Jinja2 Environment
     template_dir = os.path.join("src", "scout", "web", "templates")
     env = Environment(loader=FileSystemLoader(template_dir))
-    template = env.get_template("index.html")
     
     # 2. Fetch Data from SQLite
     conn = get_connection()
-    conn.row_factory = sqlite3.Row if 'sqlite3' in globals() else None
-    
     import sqlite3
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -26,8 +24,7 @@ def build_static_site():
                (SELECT s.type FROM evidence e JOIN discoveries d ON e.discovery_id = d.id JOIN sources s ON d.source_id = s.id WHERE e.problem_id = p.id LIMIT 1) as source_type
         FROM opportunities o
         JOIN problems p ON o.problem_id = p.id
-        ORDER BY o.score DESC, o.created_at DESC
-        LIMIT 50
+        ORDER BY o.created_at DESC
     """
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -35,15 +32,46 @@ def build_static_site():
     opportunities = [dict(row) for row in rows]
     conn.close()
     
+    today_opportunities = []
+    archives_by_date = {}
+    
+    if opportunities:
+        latest_dt = datetime.datetime.strptime(opportunities[0]['created_at'], "%Y-%m-%d %H:%M:%S")
+        latest_date_str = latest_dt.strftime("%B %d, %Y")
+        
+        for opp in opportunities:
+            opp_dt = datetime.datetime.strptime(opp['created_at'], "%Y-%m-%d %H:%M:%S")
+            opp_date_str = opp_dt.strftime("%B %d, %Y")
+            
+            if opp_date_str == latest_date_str:
+                today_opportunities.append(opp)
+            else:
+                if opp_date_str not in archives_by_date:
+                    archives_by_date[opp_date_str] = []
+                archives_by_date[opp_date_str].append(opp)
+                
+    # Sort opportunities within each day by score DESC
+    today_opportunities.sort(key=lambda x: x['score'], reverse=True)
+    for date_str in archives_by_date:
+        archives_by_date[date_str].sort(key=lambda x: x['score'], reverse=True)
+
     # 3. Render HTML
-    rendered_html = template.render(opportunities=opportunities)
+    template_index = env.get_template("index.html")
+    rendered_index = template_index.render(opportunities=today_opportunities, is_archive=False, today_date=latest_date_str if opportunities else "Today")
+    
+    template_archive = env.get_template("archive.html")
+    rendered_archive = template_archive.render(archives=archives_by_date, is_archive=True)
     
     # 4. Save to /public directory
     os.makedirs("public", exist_ok=True)
     with open(os.path.join("public", "index.html"), "w", encoding="utf-8") as f:
-        f.write(rendered_html)
+        f.write(rendered_index)
         
-    print(f"Successfully generated public/index.html with {len(opportunities)} opportunities.")
+    with open(os.path.join("public", "archive.html"), "w", encoding="utf-8") as f:
+        f.write(rendered_archive)
+        
+    print(f"Successfully generated public/index.html with {len(today_opportunities)} opportunities.")
+    print(f"Successfully generated public/archive.html with {sum(len(v) for v in archives_by_date.values())} opportunities.")
 
 if __name__ == "__main__":
     build_static_site()
